@@ -16,7 +16,7 @@ warnings.filterwarnings('ignore')
 st.set_page_config(page_title="RUNAI | Performance Intelligence", layout="wide", initial_sidebar_state="expanded")
 
 # =========================================================
-#  DESIGN SYSTEM — RUNAI
+#  DESIGN SYSTEM — RUNAI (SPORT TECH RUN)
 # =========================================================
 st.markdown("""
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,8 +38,8 @@ st.markdown("""
 
     .stApp {
         background:
-            radial-gradient(circle at 15% 0%, rgba(0,229,255,0.05) 0%, transparent 45%),
-            radial-gradient(circle at 85% 100%, rgba(255,106,61,0.04) 0%, transparent 45%),
+            radial-gradient(circle at 15% 0%, rgba(0,229,255,0.06) 0%, transparent 45%),
+            radial-gradient(circle at 85% 100%, rgba(255,106,61,0.05) 0%, transparent 45%),
             var(--bg);
         color: var(--text);
         font-family: 'Inter', sans-serif;
@@ -101,12 +101,11 @@ st.markdown("""
 
     .explain-text {
         font-family: 'Inter', sans-serif; font-size: 0.87em; color: var(--text-faint); line-height: 1.55;
-        margin-top: 6px; padding: 14px 16px; background: var(--panel); border-radius: 8px; border-left: 2px solid var(--line);
+        margin-top: 8px; margin-bottom: 14px; padding: 14px 16px; background: var(--panel); border-radius: 8px; border-left: 2px solid var(--cyan);
     }
     .explain-text strong { color: var(--text-dim); font-weight: 600; }
     .data-figure { font-family: 'JetBrains Mono', monospace; }
 
-    /* WIDGETS E FORM */
     .stForm { background-color: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 26px; }
     .stTextInput input, .stNumberInput input, .stTextArea textarea, .stDateInput input {
         background-color: #131a29 !important; color: var(--text) !important; border: 1px solid var(--line) !important;
@@ -135,7 +134,6 @@ st.markdown("""
         letter-spacing: 0.02em !important;
     }
 
-    /* SIDEBAR & MENU */
     section[data-testid="stSidebar"] { background-color: var(--bg) !important; border-right: 1px solid var(--line); }
     section[data-testid="stSidebar"] > div { background-color: var(--bg) !important; }
     section[data-testid="stSidebar"] h3 { color: var(--text-dim) !important; }
@@ -188,15 +186,15 @@ def style_fig(fig, height=None):
     if height: fig.update_layout(height=height)
     return fig
 
-# SVG Generator per Immagini Sport Tech create ad hoc
+# Generatore SVG personalizzati stile Sport Tech Run
 def get_svg_url(svg_string):
     b64 = base64.b64encode(svg_string.encode('utf-8')).decode('utf-8')
     return f"data:image/svg+xml;base64,{b64}"
 
-SVG_ANALISI = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><path d="M50,200 L250,200 L300,80 L350,280 L400,150 L450,250 L500,200 L850,200" stroke="#00E5FF" stroke-width="4" fill="none" opacity="0.8"/><circle cx="300" cy="80" r="6" fill="#00F5A0"/><circle cx="350" cy="280" r="6" fill="#FF6A3D"/><g opacity="0.3"><line x1="0" y1="100" x2="900" y2="100" stroke="#1c2333" stroke-width="1"/><line x1="0" y1="300" x2="900" y2="300" stroke="#1c2333" stroke-width="1"/></g><text x="60" y="360" fill="#566178" font-family="monospace" font-size="18">BIOMETRIC // SCAN</text></svg>"""
+SVG_ANALISI = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><path d="M50,200 L250,200 L300,80 L350,280 L400,150 L450,250 L500,200 L850,200" stroke="#00E5FF" stroke-width="4" fill="none" opacity="0.8"/><circle cx="300" cy="80" r="6" fill="#00F5A0"/><circle cx="350" cy="280" r="6" fill="#FF6A3D"/><g opacity="0.3"><line x1="0" y1="100" x2="900" y2="100" stroke="#1c2333" stroke-width="1"/><line x1="0" y1="300" x2="900" y2="300" stroke="#1c2333" stroke-width="1"/></g><text x="60" y="360" fill="#566178" font-family="monospace" font-size="18">RUNNER // TELEMETRY</text></svg>"""
 SVG_STATS = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><rect x="150" y="150" width="40" height="150" fill="#00E5FF" opacity="0.3"/><rect x="250" y="200" width="40" height="100" fill="#00E5FF" opacity="0.5"/><rect x="350" y="100" width="40" height="200" fill="#00F5A0" opacity="0.8"/><rect x="450" y="220" width="40" height="80" fill="#00E5FF" opacity="0.4"/><rect x="550" y="70" width="40" height="230" fill="#FFB020" opacity="0.9"/><rect x="650" y="180" width="40" height="120" fill="#00E5FF" opacity="0.6"/><path d="M170,150 L270,200 L370,100 L470,220 L570,70 L670,180" stroke="#fff" stroke-width="3" fill="none"/><circle cx="570" cy="70" r="5" fill="#FF6A3D"/><text x="150" y="360" fill="#566178" font-family="monospace" font-size="18">HISTORICAL // METRICS</text></svg>"""
-SVG_KPI = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><path d="M300,300 A 150 150 0 1 1 600,300" fill="none" stroke="#1c2333" stroke-width="20"/><path d="M300,300 A 150 150 0 0 1 500,170" fill="none" stroke="#00F5A0" stroke-width="20"/><circle cx="450" cy="270" r="10" fill="#00E5FF"/><line x1="450" y1="270" x2="520" y2="150" stroke="#00E5FF" stroke-width="4"/><text x="400" y="330" fill="#E8ECF2" font-family="monospace" font-size="28" font-weight="bold">82.4%</text><text x="70" y="360" fill="#566178" font-family="monospace" font-size="18">REALTIME // DASHBOARD</text></svg>"""
-SVG_ML = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><circle cx="200" cy="200" r="8" fill="#00E5FF"/><circle cx="350" cy="100" r="12" fill="#00F5A0"/><circle cx="350" cy="300" r="12" fill="#FFB020"/><circle cx="550" cy="150" r="15" fill="#FF6A3D"/><circle cx="550" cy="250" r="10" fill="#00E5FF"/><circle cx="750" cy="200" r="20" fill="#00F5A0"/><line x1="200" y1="200" x2="350" y2="100" stroke="#1c2333" stroke-width="2"/><line x1="200" y1="200" x2="350" y2="300" stroke="#1c2333" stroke-width="2"/><line x1="350" y1="100" x2="550" y2="150" stroke="#00E5FF" stroke-width="2" stroke-dasharray="5,5"/><line x1="350" y1="300" x2="550" y2="150" stroke="#1c2333" stroke-width="2"/><line x1="350" y1="300" x2="550" y2="250" stroke="#00F5A0" stroke-width="2" stroke-dasharray="5,5"/><line x1="550" y1="150" x2="750" y2="200" stroke="#FF6A3D" stroke-width="3"/><line x1="550" y1="250" x2="750" y2="200" stroke="#00E5FF" stroke-width="2"/><text x="70" y="360" fill="#566178" font-family="monospace" font-size="18">PREDICTIVE // ENGINE</text></svg>"""
+SVG_KPI = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><path d="M300,300 A 150 150 0 1 1 600,300" fill="none" stroke="#1c2333" stroke-width="20"/><path d="M300,300 A 150 150 0 0 1 500,170" fill="none" stroke="#00F5A0" stroke-width="20"/><circle cx="450" cy="270" r="10" fill="#00E5FF"/><line x1="450" y1="270" x2="520" y2="150" stroke="#00E5FF" stroke-width="4"/><text x="400" y="330" fill="#E8ECF2" font-family="monospace" font-size="28" font-weight="bold">98.2%</text><text x="70" y="360" fill="#566178" font-family="monospace" font-size="18">LIVE // PULSE MONITOR</text></svg>"""
+SVG_ML = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><circle cx="200" cy="200" r="8" fill="#00E5FF"/><circle cx="350" cy="100" r="12" fill="#00F5A0"/><circle cx="350" cy="300" r="12" fill="#FFB020"/><circle cx="550" cy="150" r="15" fill="#FF6A3D"/><circle cx="550" cy="250" r="10" fill="#00E5FF"/><circle cx="750" cy="200" r="20" fill="#00F5A0"/><line x1="200" y1="200" x2="350" y2="100" stroke="#1c2333" stroke-width="2"/><line x1="200" y1="200" x2="350" y2="300" stroke="#1c2333" stroke-width="2"/><line x1="350" y1="100" x2="550" y2="150" stroke="#00E5FF" stroke-width="2" stroke-dasharray="5,5"/><line x1="350" y1="300" x2="550" y2="150" stroke="#1c2333" stroke-width="2"/><line x1="350" y1="300" x2="550" y2="250" stroke="#00F5A0" stroke-width="2" stroke-dasharray="5,5"/><line x1="550" y1="150" x2="750" y2="200" stroke="#FF6A3D" stroke-width="3"/><line x1="550" y1="250" x2="750" y2="200" stroke="#00E5FF" stroke-width="2"/><text x="70" y="360" fill="#566178" font-family="monospace" font-size="18">PREDICTIVE // ALGORITHMS</text></svg>"""
 SVG_PLAN = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400"><rect width="900" height="400" fill="#080B12"/><circle cx="450" cy="200" r="120" fill="none" stroke="#1c2333" stroke-width="2"/><circle cx="450" cy="200" r="80" fill="none" stroke="#1c2333" stroke-width="2"/><circle cx="450" cy="200" r="40" fill="#00E5FF" opacity="0.2"/><circle cx="450" cy="200" r="10" fill="#00F5A0"/><path d="M450,200 L550,100" stroke="#FFB020" stroke-width="3"/><circle cx="550" cy="100" r="6" fill="#FFB020"/><path d="M450,200 L300,250" stroke="#FF6A3D" stroke-width="3"/><circle cx="300" cy="250" r="6" fill="#FF6A3D"/><text x="70" y="360" fill="#566178" font-family="monospace" font-size="18">ACTION // PROTOCOL</text></svg>"""
 
 IMG_HERO_ANALISI = get_svg_url(SVG_ANALISI)
@@ -314,18 +312,20 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
-# ----------------- PAGINA 1: ANALISI STATO DI FORMA -----------------
+# ---------------------------------------------------------
+# PAGINA 1: ANALISI STATO DI FORMA
+# ---------------------------------------------------------
 if pagina == "ANALISI STATO DI FORMA":
     header_block(
         "Modulo 01 — Acquisizione Dati",
-        "ANALISI STATO DI FORMA: Pre-Session",
-        "Inserisci i parametri fisiologici e di carico odierni: il motore predittivo li userà per calcolare il tuo rischio infortunio in tempo reale.",
-        IMG_HERO_ANALISI, "Biometric Input"
+        "ANALISI STATO DI FORMA",
+        "Inserisci i parametri fisiologici e seleziona l'obiettivo odierno: il sistema elaborerà lo stato di preparazione in tempo reale.",
+        IMG_HERO_ANALISI, "Sport Tech Scan"
     )
 
     st.markdown("""
     <div class='info-box'>
-    <strong>Compila il questionario per avviare il motore di predizione.</strong>
+    <strong>Configura i parametri odierni per avviare l'analisi predittiva.</strong>
     </div>
     """, unsafe_allow_html=True)
 
@@ -333,7 +333,6 @@ if pagina == "ANALISI STATO DI FORMA":
         st.markdown("### Obiettivi")
         col_o1, col_o2 = st.columns(2)
         with col_o1:
-            # Modifica: "Obiettivo Odierno" ora è una selectbox
             obj_oggi = st.selectbox("Obiettivo Odierno", ["Leggero", "Medio", "Intermedio"])
         with col_o2:
             distanza_oggi = st.number_input("Distanza Prevista (km)", min_value=0.0, value=10.0)
@@ -374,7 +373,7 @@ if pagina == "ANALISI STATO DI FORMA":
             rpe_previsto = st.slider("RPE previsto (1-10)", 1, 10, 6)
 
         st.markdown("---")
-        bottone = st.form_submit_button("ANALIZZA PARAMETRI", use_container_width=True)
+        bottone = st.form_submit_button("ANALIZZA STATO DI FORMA", use_container_width=True)
 
     if bottone:
         st.session_state.analisi_fatta = True
@@ -383,23 +382,17 @@ if pagina == "ANALISI STATO DI FORMA":
             'km_obj_finale': km_obj_finale, 'ore_sonno': ore_sonno, 'qualita_sonno': qualita_sonno, 'fc_riposo': fc_riposo,
             'stress_lavoro': stress_lavoro, 'ore_lavoro': ore_lavoro, 'tipo_allenamento': tipo_allenamento, 'rpe_previsto': rpe_previsto,
         }
-        st.success("Analisi completata e caricata nel modello.")
+        st.success("Stato di forma analizzato con successo.")
 
-        if obj_finale:
-            giorni_rimasti = (pd.Timestamp(data_obj_finale) - pd.Timestamp.today()).days
-            st.markdown(f"""
-            <div class='info-box' style='border-left-color:#00F5A0;'>
-            <strong>Obiettivo Finale impostato:</strong> {obj_finale} ({km_obj_finale:.1f} km) — mancano circa <strong>{max(giorni_rimasti,0)} giorni</strong> ({pd.Timestamp(data_obj_finale).strftime('%d/%m/%Y')}).
-            </div>
-            """, unsafe_allow_html=True)
-
-# ----------------- PAGINA 2: STATISTICHE ANALISI -----------------
+# ---------------------------------------------------------
+# PAGINA 2: STATISTICHE ANALISI
+# ---------------------------------------------------------
 elif pagina == "STATISTICHE ANALISI":
     header_block(
         "Modulo 02 — Analytics Storico",
         "STATISTICHE ANALISI",
-        "Volume, intensità e recupero degli ultimi tre mesi, decodificati in pattern utilizzabili.",
-        IMG_HERO_STATS, "Historical Load"
+        "Volume, intensità e recupero degli ultimi tre mesi, decodificati in metriche di performance avanzate.",
+        IMG_HERO_STATS, "Historical Metrics"
     )
 
     df = st.session_state.dati.copy()
@@ -424,14 +417,14 @@ elif pagina == "STATISTICHE ANALISI":
             df_weekly['Giorno'] = df_weekly['Giorno'].astype(str)
             fig1 = px.bar(df_weekly, x='Giorno', y='Distanza (km)', height=300, color='Distanza (km)', color_continuous_scale=[[0,'#0E4A57'],[1,'#00E5FF']])
             st.plotly_chart(style_fig(fig1), use_container_width=True)
-            st.markdown("<div class='explain-text'>Verifica che le barre non facciano salti maggiori del 10% da una settimana all'altra. Un picco improvviso porta a infiammazioni tendinee.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Verifica che le barre non presentino sbalzi improvvisi superiori al 10% da una settimana all'altra per prevenire sovraccarichi tendinei.</div>", unsafe_allow_html=True)
 
             st.markdown("**Carico per Giorno della Settimana**")
             df['Giorno_Settimana'] = df['Giorno'].dt.day_name()
             df_day = df.groupby('Giorno_Settimana')['Distanza (km)'].mean().reindex(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']).reset_index()
             fig_day = px.bar(df_day, x='Giorno_Settimana', y='Distanza (km)', height=300, color_discrete_sequence=['#00E5FF'])
             st.plotly_chart(style_fig(fig_day), use_container_width=True)
-            st.markdown("<div class='explain-text'>Visualizza la tua routine. Assicurati che ai giorni con barre alte seguano giorni con barre basse o assenti (recupero attivo).</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Evidenzia la distribuzione settimanale dei chilometri. Assicurati di alternare giorni di carico a giorni di recupero attivo.</div>", unsafe_allow_html=True)
 
         with col2:
             st.markdown("**Distanza Cumulativa**")
@@ -439,7 +432,7 @@ elif pagina == "STATISTICHE ANALISI":
             fig_cum = px.line(df, x='Giorno', y='Cumulativa', height=300, markers=True)
             fig_cum.update_traces(line_color="#00E5FF")
             st.plotly_chart(style_fig(fig_cum), use_container_width=True)
-            st.markdown("<div class='explain-text'>Una linea retta indica costanza. Una linea piatta indica stop o infortuni.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Traccia la progressione lineare dei chilometri accumulati nel trimestre di riferimento.</div>", unsafe_allow_html=True)
 
             record_km = df.loc[df['Distanza (km)'].idxmax()]
             record_vel = df.loc[df['Velocità (km/h)'].idxmax()]
@@ -449,19 +442,10 @@ elif pagina == "STATISTICHE ANALISI":
             st.markdown(f"""
             <div class='kpi-card' style='text-align:left; margin-top:10px; background: linear-gradient(135deg, #0E1420 0%, #131427 100%);'>
                 <h3 style='color:#FFB020; margin-bottom:15px;'>Bacheca Record — Ultimi 90 giorni</h3>
-                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0; font-family:"Inter",sans-serif;'>
-                    <span>Corsa più lunga</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{record_km['Distanza (km)']:.1f} km</strong>
-                </div>
-                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0; font-family:"Inter",sans-serif;'>
-                    <span>Velocità massima</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{record_vel['Velocità (km/h)']:.1f} km/h</strong>
-                </div>
-                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0; font-family:"Inter",sans-serif;'>
-                    <span>Miglior striscia sopra media</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{streak} allenamenti</strong>
-                </div>
-                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0; font-family:"Inter",sans-serif;'>
-                    <span>Giorni con allenamento</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{giorni_attivi} / {len(df)}</strong>
-                </div>
-                <p style='color:#566178; font-size:0.8em; margin-top:12px; margin-bottom:0; font-family:"Inter",sans-serif;'>Ogni record battuto è un passo in più verso l'obiettivo finale.</p>
+                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0;'><span>Corsa più lunga</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{record_km['Distanza (km)']:.1f} km</strong></div>
+                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0;'><span>Velocità massima</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{record_vel['Velocità (km/h)']:.1f} km/h</strong></div>
+                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0;'><span>Miglior striscia sopra media</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{streak} allenamenti</strong></div>
+                <div style='display:flex; justify-content:space-between; margin:8px 0; color:#B8C2D0;'><span>Giorni con allenamento</span><strong style='color:#fff; font-family:"JetBrains Mono",monospace;'>{giorni_attivi} / {len(df)}</strong></div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -471,7 +455,7 @@ elif pagina == "STATISTICHE ANALISI":
             st.markdown("**FC Media vs Velocità**")
             fig2 = px.scatter(df, x='Velocità (km/h)', y='FC Media', size='Distanza (km)', color='RPE', color_continuous_scale=[[0,'#0E4A57'],[0.5,'#00E5FF'],[1,'#FF6A3D']], height=300)
             st.plotly_chart(style_fig(fig2), use_container_width=True)
-            st.markdown("<div class='explain-text'>Più i punti scendono verso il basso a destra, più il tuo cuore è efficiente (vai veloce faticando poco). I punti arancioni sono i lavori massimali.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Relazione tra velocità e frequenza cardiaca. Una maggiore efficienza sposta i punti verso destra mantenendo i battiti bassi.</div>", unsafe_allow_html=True)
 
             st.markdown("**Ripartizione Zone Cardiache**")
             bins = [0, 120, 140, 160, 180, 200]
@@ -480,7 +464,7 @@ elif pagina == "STATISTICHE ANALISI":
             zone_counts = df['Zone'].value_counts().reset_index()
             fig_zones = px.pie(zone_counts, values='count', names='Zone', hole=0.6, height=300, color_discrete_sequence=['#00E5FF','#00B8D4','#0E4A57','#FFB020','#FF6A3D'])
             st.plotly_chart(style_fig(fig_zones), use_container_width=True)
-            st.markdown("<div class='explain-text'>Un allenamento sano prevede 80% in Z1/Z2 e 20% in Z4/Z5. Evita di rimanere intrappolato in Z3 (zona grigia), che stanca senza allenare efficacemente.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Distribuzione percentuale del tempo trascorso nelle diverse zone cardiache di allenamento.</div>", unsafe_allow_html=True)
 
         with col2:
             st.markdown("**Distribuzione RPE**")
@@ -488,7 +472,7 @@ elif pagina == "STATISTICHE ANALISI":
             fig3.add_vline(x=3.5, line_dash="dash", line_color="#00F5A0")
             fig3.add_vline(x=6.5, line_dash="dash", line_color="#FF6A3D")
             st.plotly_chart(style_fig(fig3), use_container_width=True)
-            st.markdown("<div class='explain-text'>Mostra quante volte hai spinto al massimo (oltre la linea arancione) e quante volte hai recuperato (sotto la linea verde).</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Frequenza dei livelli di sforzo percepito registrati al termine delle sessioni.</div>", unsafe_allow_html=True)
 
     with tab3:
         col1, col2 = st.columns(2)
@@ -499,13 +483,13 @@ elif pagina == "STATISTICHE ANALISI":
             fig_sleep.add_hline(y=7.5, line_dash="dash", line_color="#00F5A0")
             fig_sleep.add_hline(y=6.5, line_dash="dash", line_color="#FF6A3D")
             st.plotly_chart(style_fig(fig_sleep), use_container_width=True)
-            st.markdown("<div class='explain-text'>Cerca di stare sempre sopra la linea verde. Le discese verso la linea arancione corrispondono a cali di prestazione muscolare.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Monitoraggio giornaliero delle ore di sonno rispetto alle soglie di recupero raccomandate.</div>", unsafe_allow_html=True)
 
             st.markdown("**Debito di Sonno (Rolling 7gg)**")
             df['Debito'] = df['Ore Sonno'].apply(lambda x: max(0, 7.5 - x)).rolling(7).sum()
             fig_debt = px.area(df, x='Giorno', y='Debito', height=300, color_discrete_sequence=['#FF6A3D'])
             st.plotly_chart(style_fig(fig_debt), use_container_width=True)
-            st.markdown("<div class='explain-text'>Quest'area è fatica accumulata. Se il debito supera le 5 ore in una settimana, il rischio di strappi o contratture decuplica.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Accumulo settimanale del deficit di sonno rispetto allo standard ottimale di 7.5 ore.</div>", unsafe_allow_html=True)
 
         with col2:
             st.markdown("**Sonno vs Sforzo**")
@@ -513,7 +497,7 @@ elif pagina == "STATISTICHE ANALISI":
             fig4.add_hline(y=7, line_dash="dash", line_color="#FFB020")
             fig4.add_vline(x=6.5, line_dash="dash", line_color="#FFB020")
             st.plotly_chart(style_fig(fig4), use_container_width=True)
-            st.markdown("<div class='explain-text'>Il quadrante in alto a sinistra (poco sonno, alto sforzo) è la 'zona critica'. Evita che i punti cadano in quell'area.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'>Correlazione bivariata tra ore di sonno e intensità dello sforzo in relazione al rischio infortuni.</div>", unsafe_allow_html=True)
 
     with tab4:
         st.markdown("**Ultimi 15 Allenamenti**")
@@ -528,17 +512,19 @@ elif pagina == "STATISTICHE ANALISI":
         fig_table.update_layout(margin=dict(l=0, r=0, t=0, b=0), height=500)
         st.plotly_chart(style_fig(fig_table), use_container_width=True)
 
-# ----------------- PAGINA 3: KPI DASHBOARD -----------------
+# ---------------------------------------------------------
+# PAGINA 3: KPI DASHBOARD
+# ---------------------------------------------------------
 elif pagina == "KPI DASHBOARD":
     header_block(
         "Modulo 03 — Live Monitoring",
-        "KPI DASHBOARD: CRUSCOTTO PRESTAZIONALE",
-        "Bilancio carico/recupero, rischio infortunio e profilo atletico calcolati sui parametri appena inseriti.",
-        IMG_HERO_KPI, "Real-Time Dashboard"
+        "KPI DASHBOARD",
+        "Bilancio carico/recupero, indice di rischio e profilo atletico calcolati sui parametri odierni.",
+        IMG_HERO_KPI, "Live Pulse Monitor"
     )
 
     if not st.session_state.analisi_fatta:
-        st.warning("Completa il questionario in 'Analisi Stato Di Forma' prima di accedere a questa dashboard.")
+        st.warning("Completa prima il questionario nella pagina 'ANALISI STATO DI FORMA'.")
     else:
         r = st.session_state.risultati_analisi
         df = st.session_state.dati.copy()
@@ -550,11 +536,7 @@ elif pagina == "KPI DASHBOARD":
         fig_balance.add_trace(go.Scatter(x=df_14['Giorno'], y=(df_14['Ore Sonno']/8)*100, name="Capacità di Recupero", line=dict(color='#00F5A0', width=4)))
         fig_balance.update_layout(height=400, legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(color="#E8ECF2", size=13), bgcolor="rgba(14,20,32,0.85)", bordercolor="#1c2333", borderwidth=1))
         st.plotly_chart(style_fig(fig_balance), use_container_width=True)
-        st.markdown("""
-        <div class='explain-text' style='margin-bottom: 25px;'>
-        La linea verde rappresenta la tua "Batteria" (quanto dormi e recuperi). L'area arancione è quanto sforzo spremi dal tuo corpo. Finché la linea verde avvolge i picchi arancioni, sei in stato di Supercompensazione (migliori). Se l'arancione sta costantemente sopra il verde, stai andando in Overtraining.
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Confronta visivamente la curva dello stress fisico (area arancione) con la capacità di recupero biologico (linea verde). Quando la linea verde sovrasta i picchi di carico, il corpo si trova in fase di supercompensazione ottimale.</div>", unsafe_allow_html=True)
 
         risk_score = min(100,
             (40 if r['ore_sonno'] < 6 else 25 if r['ore_sonno'] < 6.5 else 10) +
@@ -596,7 +578,7 @@ elif pagina == "KPI DASHBOARD":
             ))
             fig_gauge.update_layout(height=360)
             st.plotly_chart(style_fig(fig_gauge), use_container_width=True)
-            st.markdown("<div class='explain-text'><strong>Indicatore di Rischio:</strong> Calcola la probabilità probabilistica di un sovraccarico lesivo se svolgi la sessione impostata, bilanciando recupero e sforzo.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Tachimetro sintetico che quantifica il livello di pericolo sistemico attuale, associando fasce di colore (Verde = Sicuro, Giallo = Attenzione, Rosso = Rischio elevato).</div>", unsafe_allow_html=True)
         
         with col_g2:
             fig_radar = go.Figure()
@@ -607,7 +589,7 @@ elif pagina == "KPI DASHBOARD":
             ))
             fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 10], gridcolor='#1c2333'), angularaxis=dict(gridcolor='#1c2333')), height=360)
             st.plotly_chart(style_fig(fig_radar), use_container_width=True)
-            st.markdown("<div class='explain-text'><strong>Radar Fisiologico:</strong> Mappa l'impronta del tuo stato di forma odierno. Un'area troppo sbilanciata verso l'alto (Stress/RPE) senza un equivalente supporto del sonno segnala un pericolo biomeccanico.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Diagramma a ragnatela multidimensionale che mappa l'equilibrio tra i fattori di stress e le risorse di recupero attuali dell'atleta.</div>", unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("### Il Tuo Profilo Atletico AI")
@@ -641,12 +623,14 @@ elif pagina == "KPI DASHBOARD":
             </div>
             """, unsafe_allow_html=True)
 
-# ----------------- PAGINA 4: ANALISI PREDITTIVA ML -----------------
+# ---------------------------------------------------------
+# PAGINA 4: ANALISI PREDITTIVA ML
+# ---------------------------------------------------------
 elif pagina == "ANALISI PREDITTIVA ML":
     header_block(
         "Modulo 04 — Model Explainability",
         "ANALISI PREDITTIVA ML",
-        "Modelli multi-livello addestrati sul tuo storico per prevedere performance, pattern e rischi.",
+        "Esplora i modelli di Machine Learning avanzati addestrati sul tuo storico biometrico e comportamentale.",
         IMG_HERO_ML, "Machine Learning Engine"
     )
 
@@ -654,26 +638,24 @@ elif pagina == "ANALISI PREDITTIVA ML":
 
     st.markdown("""
     <div class='info-box'>
-    <h3>Cos'è il Machine Learning in questo contesto?</h3>
-    <p style='color: #B8C2D0; font-family:"Inter",sans-serif;'>Il sistema non usa formule matematiche rigide. Piuttosto, gli algoritmi "imparano" dai tuoi 90 giorni di dati storici identificando correlazioni nascoste (es. come il sonno impatta la tua frequenza cardiaca a una certa velocità). I modelli generano previsioni e segmentazioni altamente personalizzate sulla tua bio-dinamica unica.</p>
+    <h3>Come opera il Machine Learning in RUNAI?</h3>
+    <p style='color: #B8C2D0; font-family:"Inter",sans-serif;'>Il sistema analizza i tuoi 90 giorni di dati storici mediante algoritmi di classificazione, regressione e clustering non supervisionato per individuare pattern invisibili e stimare con precisione la tua risposta biologica agli stimoli.</p>
     </div>
     """, unsafe_allow_html=True)
 
     try:
-        # Preprocessing per i modelli supervisionati (Rischio Infortunio)
         X_train_class = df[['Distanza (km)', 'Ore Sonno', 'Stress Lavoro', 'FC Media', 'RPE']].values
         y_train_class = df['Rischio Infortunio'].values
         scaler = StandardScaler()
         X_scaled_class = scaler.fit_transform(X_train_class)
 
-        # Tab layout
         t_ml1, t_ml2, t_ml3, t_ml4, t_ml5, t_ml6 = st.tabs([
             "Random Forest", "Logistic Regression", "Linear Regression", "Cluster K-Means", "Stress Prediction", "Simulatore What-If"
         ])
 
         with t_ml1:
-            st.markdown("### Random Forest Classifier (Previsione Infortunio)")
-            st.markdown("<div class='explain-text'><strong>Come funziona:</strong> Il modello costruisce 100 'Alberi Decisionali', ognuno dei quali valuta i tuoi parametri in modo leggermente diverso. Il risultato finale è la media dei loro 'voti'. È eccellente per catturare relazioni non-lineari.</div>", unsafe_allow_html=True)
+            st.markdown("### Random Forest Classifier (Infortunio)")
+            st.markdown("<div class='explain-text'><strong>Spiegazione Algoritmo:</strong> Modello basato su un insieme (ensemble) di alberi decisionali indipendenti. Ciascun albero esprime un voto binario basato su soglie biometriche; il risultato finale aggrega le probabilità. È ideale per catturare dinamiche non lineari complesse.</div>", unsafe_allow_html=True)
             
             rf_model = RandomForestClassifier(n_estimators=100, random_state=42, max_depth=8, min_samples_split=5)
             rf_model.fit(X_scaled_class, y_train_class)
@@ -690,14 +672,14 @@ elif pagina == "ANALISI PREDITTIVA ML":
                 y_pred_rf = rf_model.predict(X_scaled_class)
                 cm = confusion_matrix(y_train_class, y_pred_rf)
                 fig_cm = go.Figure(data=go.Heatmap(z=cm, x=['Pred: Sicuro', 'Pred: Rischio'], y=['Reale: Sicuro', 'Reale: Rischio'], text=cm, texttemplate='%{text}', textfont={"size": 20, "color": "#04121a"}, colorscale=[[0,'#0E1420'],[1,'#00E5FF']], showscale=False))
-                fig_cm.update_layout(height=350, title="Matrice di Confusione (Test)")
+                fig_cm.update_layout(height=350, title="Matrice di Confusione")
                 st.plotly_chart(style_fig(fig_cm), use_container_width=True)
             
-            st.markdown("<div class='explain-text'><strong>Risultati:</strong> Il grafico a sinistra mostra quali parametri influenzano di più il 'voto' degli alberi. La matrice a destra indica la capacità del modello di non dare falsi allarmi sui dati storici.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Analisi Risultati:</strong> Il grafico a barre mostra il peso relativo di ogni metrica nel processo decisionale della foresta. La matrice di confusione evidenzia l'accuratezza predittiva rispetto agli eventi storici reali.</div>", unsafe_allow_html=True)
 
         with t_ml2:
-            st.markdown("### Logistic Regression (Probabilità Lineare di Infortunio)")
-            st.markdown("<div class='explain-text'><strong>Come funziona:</strong> Modella la probabilità di infortunio usando un'equazione lineare. A differenza della 'Foresta', ci fornisce dei 'Pesi' (Coefficienti): quelli positivi aumentano il rischio, quelli negativi lo diminuiscono.</div>", unsafe_allow_html=True)
+            st.markdown("### Logistic Regression (Probabilità Lineare)")
+            st.markdown("<div class='explain-text'><strong>Spiegazione Algoritmo:</strong> Modello statistico supervisionato che calcola la probabilità di un evento binario (rischio sì/no) attraverso una funzione logistica. Restituisce coefficienti lineari espliciti per ciascuna feature.</div>", unsafe_allow_html=True)
             
             log_model = LogisticRegression(random_state=42)
             log_model.fit(X_scaled_class, y_train_class)
@@ -705,15 +687,15 @@ elif pagina == "ANALISI PREDITTIVA ML":
             
             colors = ['#FF6A3D' if c > 0 else '#00F5A0' for c in coefs]
             fig_log = go.Figure(go.Bar(x=feature_names, y=coefs, marker_color=colors))
-            fig_log.update_layout(height=400, title="Impatto Direzionale (Coefficienti LogReg)", yaxis_title="Impatto (Odds Logaritmico)")
+            fig_log.update_layout(height=400, title="Coefficienti di Impatto (Logistic Regression)", yaxis_title="Peso Coefficiente")
             fig_log.add_hline(y=0, line_color="#E8ECF2", line_width=1)
             st.plotly_chart(style_fig(fig_log), use_container_width=True)
             
-            st.markdown("<div class='explain-text'><strong>Risultati:</strong> Le barre verdi (valori negativi, come le Ore di Sonno) indicano i fattori 'Protettivi' che abbassano la probabilità di lesioni. Le barre arancioni spingono la probabilità verso l'alto (es. Stress e RPE elevato).</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Analisi Risultati:</strong> I coefficienti verdi (es. ore di sonno) agiscono come fattori protettivi riducendo la probabilità di rischio; i coefficienti arancioni (es. stress o RPE elevato) aumentano esponenzialmente le probabilità di sovraccarico.</div>", unsafe_allow_html=True)
 
         with t_ml3:
             st.markdown("### Linear Regression (Previsione FC Media)")
-            st.markdown("<div class='explain-text'><strong>Come funziona:</strong> Cerca di tracciare la linea retta migliore per predire una variabile continua. Qui lo usiamo per prevedere quanti battiti al minuto avrai in base al ritmo (Velocità), Temperatura e Distanza.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Algoritmo:</strong> Algoritmo di regressione supervisionata che modella il legame lineare tra una variabile continua dipendente (Frequenza Cardiaca) e variabili indipendenti (Velocità, Temperatura, Distanza).</div>", unsafe_allow_html=True)
             
             X_lr = df[['Velocità (km/h)', 'Temp (°C)', 'Distanza (km)']]
             y_lr = df['FC Media']
@@ -723,46 +705,43 @@ elif pagina == "ANALISI PREDITTIVA ML":
             
             fig_lr = px.scatter(df, x='FC Media', y='FC_Predetta', color='RPE', color_continuous_scale=[[0,'#00E5FF'],[1,'#FF6A3D']])
             fig_lr.add_shape(type="line", x0=df['FC Media'].min(), y0=df['FC Media'].min(), x1=df['FC Media'].max(), y1=df['FC Media'].max(), line=dict(color="#00F5A0", dash="dash"))
-            fig_lr.update_layout(height=400, title="Battiti Reali vs Battiti Predetti (Regressione Lineare)", xaxis_title="FC Reale", yaxis_title="FC Predetta")
+            fig_lr.update_layout(height=400, title="FC Reale vs FC Predetta", xaxis_title="FC Reale", yaxis_title="FC Predetta")
             st.plotly_chart(style_fig(fig_lr), use_container_width=True)
             
-            st.markdown("<div class='explain-text'><strong>Risultati:</strong> La linea tratteggiata verde è la predizione perfetta. Più i punti (gli allenamenti) sono vicini alla linea, più il tuo cuore risponde in modo meccanico e prevedibile agli sforzi. I punti molto lontani indicano giorni in cui eri particolarmente stanco o particolarmente in forma rispetto alla tua norma termodinamica.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Analisi Risultati:</strong> La linea diagonale verde rappresenta la previsione perfetta. La vicinanza dei punti dimostra quanto la risposta cardiaca sia prevedibile in base alle condizioni ambientali e di velocità; deviazioni anomale segnalano affaticamento latente.</div>", unsafe_allow_html=True)
 
         with t_ml4:
-            st.markdown("### Cluster Analysis (Segmentazione K-Means)")
-            st.markdown("<div class='explain-text'><strong>Come funziona:</strong> Un algoritmo 'Non Supervisionato'. Non gli diciamo cosa cercare; gli passiamo solo le tue Frequenze Cardiache e Distanze e gli chiediamo di trovare 3 gruppi naturali di allenamento.</div>", unsafe_allow_html=True)
+            st.markdown("### Cluster Analysis (K-Means)")
+            st.markdown("<div class='explain-text'><strong>Spiegazione Algoritmo:</strong> Algoritmo di apprendimento non supervisionato che raggruppa automaticamente il set di dati in 3 cluster omogenei in base a similarità di distanza percorsa e frequenza cardiaca media.</div>", unsafe_allow_html=True)
             
             X_clust = df[['Distanza (km)', 'FC Media']]
             km = KMeans(n_clusters=3, random_state=42)
             df['Cluster_ID'] = km.fit_predict(X_clust)
-            
-            # Map cluster IDs to qualitative names
-            cluster_centers = km.cluster_centers_
-            df['Cluster_Type'] = df['Cluster_ID'].apply(lambda x: f"Tipo {x+1}")
+            df['Cluster_Type'] = df['Cluster_ID'].apply(lambda x: f"Cluster {x+1}")
             
             fig_km = px.scatter(df, x='Distanza (km)', y='FC Media', color='Cluster_Type', color_discrete_sequence=['#00E5FF', '#FFB020', '#00F5A0'], size='RPE')
-            fig_km.update_layout(height=400, title="I 3 Modelli di Allenamento 'Scoperti' dall'Intelligenza Artificiale")
+            fig_km.update_layout(height=400, title="Segmentazione Cluster Allenamenti")
             st.plotly_chart(style_fig(fig_km), use_container_width=True)
             
-            st.markdown("<div class='explain-text'><strong>Risultati:</strong> L'AI ha classificato le tue sessioni. Solitamente scopre da sola queste tipologie: le sessioni corte/intense, i lunghi lenti e le sessioni di recupero. Ti aiuta a vedere se stai variando abbastanza gli stimoli (se i punti sono tutti in un solo cluster, il tuo allenamento è troppo monotono).</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Analisi Risultati:</strong> L'algoritmo suddivide autonomamente le sessioni in tipologie distinte (es. fondi lunghi, sedute di recupero, lavori ad alta intensità), consentendo di verificare l'efficacia della polarizzazione del carico.</div>", unsafe_allow_html=True)
 
         with t_ml5:
-            st.markdown("### Stress / Overload Prediction (Time Series Analisys)")
-            st.markdown("<div class='explain-text'><strong>Come funziona:</strong> Calcola una media mobile dello stress sistemico (SMA = Stress * RPE / Sonno) ed estrapola la tendenza per individuare periodi di crollo imminente prima che avvengano.</div>", unsafe_allow_html=True)
+            st.markdown("### Stress / Overload Prediction (Time Series)")
+            st.markdown("<div class='explain-text'><strong>Spiegazione Algoritmo:</strong> Analisi delle serie temporali basata sul calcolo della media mobile dello stress sistemico (SMA = Stress * RPE / Sonno), finalizzata a intercettare trend di accumulo di fatica cronica.</div>", unsafe_allow_html=True)
             
             df_stress = df[['Giorno', 'SMA']].sort_values('Giorno').copy()
             df_stress['SMA_Rolling'] = df_stress['SMA'].rolling(7, min_periods=1).mean()
             
             fig_sp = px.area(df_stress, x='Giorno', y='SMA_Rolling', color_discrete_sequence=['#FF6A3D'])
-            fig_sp.add_hline(y=15, line_dash="dash", line_color="#FFB020", annotation_text="Soglia di Allerta")
-            fig_sp.update_layout(height=400, title="Tendenza Cumulativa dello Stress (Media 7gg)")
+            fig_sp.add_hline(y=15, line_dash="dash", line_color="#FFB020", annotation_text="Soglia Critica")
+            fig_sp.update_layout(height=400, title="Media Mobile Stress Sistemico (7 Giorni)")
             st.plotly_chart(style_fig(fig_sp), use_container_width=True)
             
-            st.markdown("<div class='explain-text'><strong>Risultati:</strong> Se l'area del grafico attraversa ripetutamente la linea d'allerta tratteggiata, il tuo sistema nervoso simpatico è sotto attacco continuo. Indica i momenti storici in cui eri (o sei) a un passo dal Burnout atletico.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Analisi Risultati:</strong> L'area evidenzia l'andamento della fatica accumulata nel tempo. Superamenti ripetuti della soglia critica indicano finestre temporali ad alto rischio di sovrallenamento e calo prestazionale.</div>", unsafe_allow_html=True)
 
         with t_ml6:
             st.markdown("### Simulatore What-If (Random Forest Live)")
-            st.markdown("""<div class='info-box'><strong>Muovi le leve e osserva in tempo reale come cambia la previsione di infortunio.</strong> Questo sfrutta il modello Random Forest addestrato precedentemente.</div>""", unsafe_allow_html=True)
+            st.markdown("""<div class='info-box'><strong>Modifica i parametri interattivi e osserva in tempo reale l'impatto sul rischio stimato dal modello Random Forest.</strong></div>""", unsafe_allow_html=True)
             
             base = st.session_state.risultati_analisi if st.session_state.analisi_fatta else {'distanza_oggi': 10.0, 'ore_sonno': 7.5, 'stress_lavoro': 5, 'rpe_previsto': 6}
 
@@ -776,8 +755,6 @@ elif pagina == "ANALISI PREDITTIVA ML":
 
             sim_fc = 100 + sim_rpe * 10
             sim_input = np.array([[sim_dist, sim_sonno, sim_stress, sim_fc, sim_rpe]])
-            
-            # Predict using the trained rf_model
             sim_prob = rf_model.predict_proba(scaler.transform(sim_input))[0][1] * 100
             sim_color = "#FF6A3D" if sim_prob >= 60 else "#FFB020" if sim_prob >= 25 else "#00F5A0"
 
@@ -798,18 +775,19 @@ elif pagina == "ANALISI PREDITTIVA ML":
     except Exception as e:
         st.error(f"Errore caricamento modelli ML: {str(e)}")
 
-
-# ----------------- PAGINA 5: CONSIGLIO FINALE -----------------
+# ---------------------------------------------------------
+# PAGINA 5: CONSIGLIO FINALE
+# ---------------------------------------------------------
 elif pagina == "CONSIGLIO FINALE":
     header_block(
         "Modulo 05 — Action Plan",
         "CONSIGLIO FINALE",
-        "Protocollo pre/durante/post allenamento generato su misura per i parametri di oggi.",
+        "Protocollo operativo e proiezioni fisiologiche generate su misura per la sessione odierna.",
         IMG_HERO_PLAN, "Coach Protocol"
     )
 
     if not st.session_state.analisi_fatta:
-        st.warning("Completa il questionario in 'Analisi Stato Di Forma' per generare il piano.")
+        st.warning("Completa prima il questionario nella pagina 'ANALISI STATO DI FORMA'.")
     else:
         r = st.session_state.risultati_analisi
         df = st.session_state.dati.copy()
@@ -855,7 +833,7 @@ elif pagina == "CONSIGLIO FINALE":
                 <div class='kpi-equal-body' style='display:flex; flex-direction:column; justify-content:center; align-items:center;'>
                     <h1 style='color:white; font-size:3em; margin:0; font-family:"JetBrains Mono",monospace;'>{distanza_consigliata:.1f} km</h1>
                     <p style='color:#8792A3; font-family:"Inter",sans-serif;'>su {distanza_target}km desiderati</p>
-                    <p style='color:#566178; font-size:0.85em; margin-top:15px; text-align:center; font-family:"Inter",sans-serif;'>Tipo allenamento: <strong style='color:#B8C2D0;'>{tipo_all}</strong></p>
+                    <p style='color:#566178; font-size:0.85em; margin-top:15px; text-align:center;'>Tipo allenamento: <strong style='color:#B8C2D0;'>{tipo_all}</strong></p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -866,7 +844,7 @@ elif pagina == "CONSIGLIO FINALE":
                 <div class='kpi-equal-body' style='display:flex; flex-direction:column; justify-content:center; align-items:center;'>
                     <h1 style='color:white; font-size:3em; margin:0; font-family:"JetBrains Mono",monospace;'>{risk_score:.0f}%</h1>
                     <p style='color:#8792A3; font-family:"Inter",sans-serif;'>Probabilità Infortunio/Burnout</p>
-                    <p style='color:#566178; font-size:0.85em; margin-top:15px; text-align:center; font-family:"Inter",sans-serif;'>Recovery Score: <strong style='color:#B8C2D0;'>{recovery_score:.0f}%</strong> · SMA: <strong style='color:#B8C2D0;'>{sma:.1f}</strong></p>
+                    <p style='color:#566178; font-size:0.85em; margin-top:15px; text-align:center;'>Recovery Score: <strong style='color:#B8C2D0;'>{recovery_score:.0f}%</strong> · SMA: <strong style='color:#B8C2D0;'>{sma:.1f}</strong></p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -874,7 +852,7 @@ elif pagina == "CONSIGLIO FINALE":
             st.markdown(f"""
             <div class='kpi-card-equal'>
                 <h3 style='color:#00F5A0;'>Protocollo Coach Dettagliato</h3>
-                <div class='kpi-equal-body' style='color:#B8C2D0; font-size:0.85em; text-align:left; font-family:"Inter",sans-serif;'>
+                <div class='kpi-equal-body' style='color:#B8C2D0; font-size:0.85em; text-align:left;'>
                     <strong style='color:#00E5FF;'>PRE-ALLENAMENTO (T-90/-15 min)</strong>
                     <ul style='margin-top:5px; padding-left:18px;'>
                         <li>T-90': pasto leggero, ~{round(distanza_target * 3)}g carboidrati.</li>
@@ -913,7 +891,7 @@ elif pagina == "CONSIGLIO FINALE":
                 <p style='color:{sc}; font-weight:bold; font-family:"JetBrains Mono",monospace; font-size:0.78em; letter-spacing:0.08em;'>{sb}</p>
                 <h1 style='font-family:"JetBrains Mono",monospace;'>{r['ore_sonno']:.1f}h</h1>
                 <p style='font-family:"Inter",sans-serif; color:#8792A3;'>vs media {media_sonno_90:.1f}h</p>
-                <p style='font-family:"Inter",sans-serif; color:#566178; font-size:0.85em; margin-top:8px;'>Il tempo dedicato alla rigenerazione cellulare. Un deficit rallenta il recupero muscolare.</p>
+                <p style='font-family:"Inter",sans-serif; color:#566178; font-size:0.85em; margin-top:8px;'>Tempo di rigenerazione cellulare. Un deficit prolungato rallenta il recupero muscolare.</p>
             </div>
             """, unsafe_allow_html=True)
         with col_a2:
@@ -923,7 +901,7 @@ elif pagina == "CONSIGLIO FINALE":
                 <p style='color:{stc}; font-weight:bold; font-family:"JetBrains Mono",monospace; font-size:0.78em; letter-spacing:0.08em;'>{stb}</p>
                 <h1 style='font-family:"JetBrains Mono",monospace;'>{r['stress_lavoro']}/10</h1>
                 <p style='font-family:"Inter",sans-serif; color:#8792A3;'>vs media {media_stress_90:.1f}/10</p>
-                <p style='font-family:"Inter",sans-serif; color:#566178; font-size:0.85em; margin-top:8px;'>Il carico cognitivo e nervoso accumulato. Uno stress alto alza il cortisolo e il rischio di infortuni.</p>
+                <p style='font-family:"Inter",sans-serif; color:#566178; font-size:0.85em; margin-top:8px;'>Carico cognitivo e nervoso accumulato. Uno stress elevato innalza i livelli di cortisolo.</p>
             </div>
             """, unsafe_allow_html=True)
         with col_a3:
@@ -933,7 +911,7 @@ elif pagina == "CONSIGLIO FINALE":
                 <p style='color:{rpc}; font-weight:bold; font-family:"JetBrains Mono",monospace; font-size:0.78em; letter-spacing:0.08em;'>{rpb}</p>
                 <h1 style='font-family:"JetBrains Mono",monospace;'>{r['rpe_previsto']}/10</h1>
                 <p style='font-family:"Inter",sans-serif; color:#8792A3;'>vs media {media_rpe_90:.1f}/10</p>
-                <p style='font-family:"Inter",sans-serif; color:#566178; font-size:0.85em; margin-top:8px;'>Lo sforzo programmato per la sessione. Valori superiori alla media indicano un forte sovraccarico sistemico.</p>
+                <p style='font-family:"Inter",sans-serif; color:#566178; font-size:0.85em; margin-top:8px;'>Sforzo pianificato per la sessione odierna rispetto alla media storica registrata.</p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -948,7 +926,7 @@ elif pagina == "CONSIGLIO FINALE":
             fig_pace.update_traces(line_color="#FF6A3D")
             fig_pace.update_layout(height=300)
             st.plotly_chart(style_fig(fig_pace), use_container_width=True)
-            st.markdown("<div class='explain-text'><strong>Dinamica Cardiaca:</strong> Segui questo profilo di riscaldamento iniziale e defaticamento per non sovraccaricare il sistema cardiovascolare. Il picco riflette il tuo RPE impostato.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Andamento raccomandato della frequenza cardiaca nel corso della sessione, utile per evitare picchi precoci di affaticamento e mantenere il corretto profilo aerobico.</div>", unsafe_allow_html=True)
         
         with g_col2:
             hours = ["+0h", "+6h", "+12h", "+24h", "+48h"]
@@ -957,7 +935,7 @@ elif pagina == "CONSIGLIO FINALE":
             fig_rec.update_traces(marker_color="#00F5A0")
             fig_rec.update_layout(height=300)
             st.plotly_chart(style_fig(fig_rec), use_container_width=True)
-            st.markdown("<div class='explain-text'><strong>Sintesi Glucidica:</strong> Tempo stimato per riempire di nuovo le riserve di glicogeno muscolare dopo questa sessione. Assumi carboidrati nei primi 30' per velocizzare la barra al 100%.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Stima temporale del ripristino delle scorte di glicogeno muscolare ed epatico nelle ore successive al termine dell'attività fisica.</div>", unsafe_allow_html=True)
             
         g_col3, g_col4 = st.columns(2)
         with g_col3:
@@ -967,20 +945,20 @@ elif pagina == "CONSIGLIO FINALE":
             ])
             fig_acwr.update_layout(title="3. Bilancio Acuto vs Cronico (ACWR)", barmode='group', height=300)
             st.plotly_chart(style_fig(fig_acwr), use_container_width=True)
-            st.markdown("<div class='explain-text'><strong>ACWR (Acute:Chronic Workload Ratio):</strong> Compara il lavoro di questa settimana con il lavoro del mese. L'ideale è mantenere le barre simili (rapporto 1.0 - 1.3). Sopra 1.5 il rischio infortuni esplode.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Rapporto di carico tra gli ultimi 7 giorni (acuto) e le ultime 4 settimane (cronico). Valori compresi tra 1.0 e 1.3 rappresentano il finestrino ideale di carico progressivo.</div>", unsafe_allow_html=True)
         
         with g_col4:
             fig_pie2 = px.pie(values=[70, 20, 10], names=['Aerobico Base', 'Soglia Lattata', 'Anaerobico'], title="4. Ripartizione Energetica Richiesta", hole=0.6, color_discrete_sequence=['#00E5FF', '#FFB020', '#FF6A3D'])
             fig_pie2.update_layout(height=300)
             st.plotly_chart(style_fig(fig_pie2), use_container_width=True)
-            st.markdown("<div class='explain-text'><strong>Sistemi Energetici:</strong> Da quali serbatoi il tuo corpo prenderà l'energia. Oltre l'80% dovrebbe derivare dal sistema aerobico (ossigeno) per sviluppare resistenza senza produrre scorie lattacide.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='explain-text'><strong>Spiegazione Grafico:</strong> Ripartizione percentuale dei sistemi energetici attivati durante la sessione programmata per ottimizzare la risposta metabolica.</div>", unsafe_allow_html=True)
         
         st.markdown("<br><hr>", unsafe_allow_html=True)
-        st.markdown("### 🎯 Azioni Raccomandate in Base ai Risultati ML")
+        st.markdown("<h3>🎯 Consigli Operativi Basati sui Risultati</h3>", unsafe_allow_html=True)
         
         if risk_score < 33:
-            st.success("🟢 **PROGRESSIONE SICURA**: Il tuo corpo è perfettamente in grado di assorbire uno stimolo allenante oggi. Puoi permetterti di aumentare il volume o l'intensità del 5-10% rispetto a quanto fatto l'ultima settimana. La sessione proposta è pienamente approvata dal modello predittivo.")
+            st.success("🟢 **VIA LIBERA ALL'ALLENAMENTO**: Il tuo sistema biologico è pienamente rigenerato. I modelli confermano un rischio di infortunio minimo: puoi eseguire la sessione pianificata a pieno regime o incrementare il volume del 5%.")
         elif risk_score < 66:
-            st.warning("🟡 **MANTENIMENTO**: Ti trovi in una zona di equilibrio precario, probabilmente a causa di un leggero deficit di sonno o accumulo di stress. Non inserire nuovi stimoli intensi (ripetute/salite). Mantieni il piano originario tagliando il 10% del volume totale, focalizzandoti solo sulla regolarità.")
+            st.warning("🟡 **ATTENZIONE MODERATA**: Si rileva un lieve accumulo di fatica o uno stress lavorativo superiore alla media. Ti consigliamo di eseguire l'allenamento riducendo del 15% il volume complessivo ed evitando variazioni di ritmo troppo violente.")
         else:
-            st.error("🔴 **RECUPERO ATTIVO (RISCHIO ALTO)**: I segnali del sistema indicano un elevato rischio di infortunio o sovraccarico se prosegui con il piano impostato. **Consiglio primario:** Converti la sessione odierna in mobilità, stretching leggero o passeggiata rigenerante. La tua priorità assoluta per le prossime 24h è re-idratazione e recupero del sonno profondo.")
+            st.error("🔴 **STOP E RECUPERO NECESSARIO**: I parametri indicano un profilo di rischio critico e un forte debito di sonno/stress. Sostituisci la corsa con una sessione di sola mobilità articolare o riposo totale per evitare infortuni muscolari imminenti.")
