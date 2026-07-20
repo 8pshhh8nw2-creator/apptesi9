@@ -1,11 +1,14 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import base64
 import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix, r2_score, mean_absolute_error
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -261,12 +264,117 @@ if 'dati' not in st.session_state:
     st.session_state.risultati_analisi = {}
     st.session_state.device_connected = False
 
-# Immagini SVG Astratte Sfumate senza Contorno
-IMG_HERO_ANALISI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNDAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImcxIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDBFNUZGIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDBGNUEwIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJibHVyMSI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMzAiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiMwODBCMTIiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjI1MCIgZmlsbD0idXJsKCNnMSkiIGZpbHRlcj0idXJsKCNibHVyMSkiIG9wYWNpdHk9IjAuNiIvPjxwYXRoIGQ9Ik00MDAsNDAwIFE2MDAsMTAwIDkwMCwzMDAgTDkwMCw0MDAgWiIgZmlsbD0idXJsKCNnMSkiIG9wYWNpdHk9IjAuNCIgZmlsdGVyPSJ1cmwoI2JsdXIxKSIvPjwvc3ZnPg=="
-IMG_HERO_STATS = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNDAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImcyIiB4MT0iMCUiIHkxPSIxMDAlIiB4Mj0iMTAwJSIgeTI9IjAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY2QTNEIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRkZCMDIwIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJibHVyMiI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNDAiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiMwODBCMTIiLz48ZWxsaXBzZSBjeD0iNzAwIiBjeT0iMzAwIiByeD0iNDAwIiByeT0iMjAwIiBmaWxsPSJ1cmwoI2cyKSIgZmlsdGVyPSJ1cmwoI2JsdXIyKSIgb3BhY2l0eT0iMC41Ii8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSIyMDAiIGZpbGw9InVybCgjZzIpIiBmaWx0ZXI9InVybCgjYmx1cjIiIG9wYWNpdHk9IjAuMyIvPjwvc3ZnPg=="
-IMG_HERO_KPI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNDAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImczIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDBFNUZGIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRkY2QTNEIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJibHVyMyI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNTAiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiMwODBCMTIiLz48cGF0aCBkPSJNLTEwMCwtMTAwIEw1MDAsMjAwIEwtMTAwLDUwMCBaIiBmaWxsPSJ1cmwoI2czKSIgZmlsdGVyPSJ1cmwoI2JsdXIzKSIgb3BhY2l0eT0iMC40Ii8+PHBhdGggZD0iTTEwMDAsNTAwIEw0MDAsMjAwIEwxMDAwLC0xMDAgWiIgZmlsbD0idXJsKCNnMykiIGZpbHRlcj0idXJsKCNibHVyMykiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg=="
-IMG_HERO_ML = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNDAwIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9Imc0IiBjeD0iNTAlIiBjeT0iNTAlIiByPSI1MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwMEY1QTAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRkIwMjAiLz48L3JhZGlhbEdyYWRpZW50PjxmaWx0ZXIgaWQ9ImJsdXI0Ij48ZmVHYXVzc2lhbkJsdXIgc3RZERldmlhdGlvbj0iNDAiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiMwODBCMTIiLz48Y2lyY2xlIGN4PSI0NTAiIGN5PSIyMDAiIHI9IjMwMCIgZmlsbD0idXJsKCNnNCkiIGZpbHRlcj0idXJsKCNibHVyNCkiIG9wYWNpdHk9IjAuNCIvPjwvc3ZnPg=="
-IMG_HERO_PLAN = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNDAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Imc1IiB4MT0iMCUiIHkxPSI1MCUiIHgyPSIxMDAlIiB5Mj0iNTAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDBGNUEwIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMEU1RkYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRjZBM0QiLz48L2xpbmVhckdyYWRpZW50PjxmaWx0ZXIgaWQ9ImJsdXI1Ij48ZmVHYXVzc2lhbkJsdXIgc3RZERldmlhdGlvbj0iMzUiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiMwODBCMTIiLz48cGF0aCBkPSJNMCwyMDAgUTIyNSw1MCA0NTAsMjAwIFQ5MDAsMjAwIEw5MDAsNDAwIEwwLDQwMCBaIiBmaWxsPSJ1cmwoI2c1KSIgZmlsdGVyPSJ1cmwoI2JsdXI1KSIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+"
+def svg_uri(svg_code: str) -> str:
+    """Converte un blocco SVG scritto a mano in un data-URI utilizzabile come src di <img>."""
+    return "data:image/svg+xml;base64," + base64.b64encode(svg_code.encode("utf-8")).decode("utf-8")
+
+# ============================================================
+#  IMMAGINI ORIGINALI — stile Tech / Sport / Running
+#  (vettoriali SVG disegnate per l'app, nessuna foto esterna)
+# ============================================================
+SVG_HERO_ANALISI = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+<defs>
+<linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#00F5A0"/></linearGradient>
+<filter id="blur1"><feGaussianBlur stdDeviation="30"/></filter>
+</defs>
+<rect width="900" height="400" fill="#080B12"/>
+<circle cx="180" cy="90" r="230" fill="url(#g1)" filter="url(#blur1)" opacity="0.5"/>
+<path d="M400,400 Q600,120 900,300 L900,400 Z" fill="url(#g1)" opacity="0.3" filter="url(#blur1)"/>
+<g stroke="#1c2333" stroke-width="1" opacity="0.6"><line x1="0" y1="345" x2="900" y2="345"/><line x1="0" y1="372" x2="900" y2="372"/></g>
+<g stroke="#00E5FF" stroke-width="4" stroke-linecap="round" opacity="0.75"><line x1="472" y1="150" x2="522" y2="150"/><line x1="462" y1="180" x2="532" y2="180"/><line x1="472" y1="210" x2="517" y2="210"/></g>
+<g stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+<circle cx="645" cy="118" r="16" fill="#FFFFFF" stroke="none"/>
+<path d="M645,136 L620,188 L644,204 L602,252"/>
+<path d="M645,136 L676,172 L710,158"/>
+<path d="M620,188 L580,172"/>
+</g>
+<polyline points="60,330 140,330 165,288 190,362 215,308 240,330 320,330" fill="none" stroke="#00F5A0" stroke-width="3" opacity="0.85"/>
+<g fill="#00E5FF" opacity="0.7"><circle cx="770" cy="80" r="4"/><circle cx="810" cy="112" r="3"/><circle cx="745" cy="145" r="3"/></g>
+</svg>"""
+
+SVG_HERO_STATS = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+<defs>
+<linearGradient id="g2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF6A3D"/><stop offset="100%" stop-color="#FFB020"/></linearGradient>
+<filter id="blur2"><feGaussianBlur stdDeviation="40"/></filter>
+</defs>
+<rect width="900" height="400" fill="#080B12"/>
+<ellipse cx="700" cy="300" rx="380" ry="190" fill="url(#g2)" filter="url(#blur2)" opacity="0.4"/>
+<circle cx="110" cy="80" r="170" fill="url(#g2)" filter="url(#blur2)" opacity="0.22"/>
+<g><rect x="90" y="260" width="34" height="90" rx="3" fill="#00E5FF" opacity="0.85"/><rect x="140" y="220" width="34" height="130" rx="3" fill="#00E5FF" opacity="0.85"/><rect x="190" y="180" width="34" height="170" rx="3" fill="#00F5A0" opacity="0.9"/><rect x="240" y="240" width="34" height="110" rx="3" fill="#00E5FF" opacity="0.85"/><rect x="290" y="150" width="34" height="200" rx="3" fill="#00F5A0" opacity="0.9"/></g>
+<path d="M420,320 Q520,205 610,260 T820,150" fill="none" stroke="#FFB020" stroke-width="3" stroke-dasharray="8 8" opacity="0.85"/>
+<circle cx="420" cy="320" r="6" fill="#FFB020"/>
+<path d="M820,150 l-11,-23 l23,5 z" fill="#FF6A3D"/>
+<g transform="translate(610,196)"><path d="M0,0 C-16,0 -26,12 -26,26 C-26,44 0,70 0,70 C0,70 26,44 26,26 C26,12 16,0 0,0 Z" fill="#FF6A3D" opacity="0.9"/><circle cx="0" cy="24" r="9" fill="#080B12"/></g>
+</svg>"""
+
+SVG_HERO_KPI = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+<defs>
+<linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#FF6A3D"/></linearGradient>
+<filter id="blur3"><feGaussianBlur stdDeviation="50"/></filter>
+</defs>
+<rect width="900" height="400" fill="#080B12"/>
+<path d="M-100,-100 L500,200 L-100,500 Z" fill="url(#g3)" filter="url(#blur3)" opacity="0.3"/>
+<path d="M1000,500 L400,200 L1000,-100 Z" fill="url(#g3)" filter="url(#blur3)" opacity="0.35"/>
+<g transform="translate(620,230)">
+<path d="M-140,20 A140,140 0 0,1 140,20" fill="none" stroke="#1c2333" stroke-width="16"/>
+<path d="M-140,20 A140,140 0 0,1 40,-135" fill="none" stroke="#00F5A0" stroke-width="16"/>
+<path d="M40,-135 A140,140 0 0,1 140,20" fill="none" stroke="#FF6A3D" stroke-width="16" opacity="0.9"/>
+<line x1="0" y1="10" x2="68" y2="-88" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+<circle cx="0" cy="10" r="10" fill="#FFFFFF"/>
+</g>
+<polyline points="60,330 160,330 190,272 220,368 250,300 280,330 420,330" fill="none" stroke="#00E5FF" stroke-width="3" opacity="0.85"/>
+</svg>"""
+
+SVG_HERO_ML = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+<defs>
+<radialGradient id="g4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00F5A0"/><stop offset="100%" stop-color="#FFB020"/></radialGradient>
+<filter id="blur4"><feGaussianBlur stdDeviation="40"/></filter>
+</defs>
+<rect width="900" height="400" fill="#080B12"/>
+<circle cx="450" cy="200" r="290" fill="url(#g4)" filter="url(#blur4)" opacity="0.28"/>
+<g stroke="#00E5FF" stroke-width="1.5" opacity="0.7">
+<line x1="500" y1="90" x2="420" y2="170"/><line x1="500" y1="90" x2="580" y2="170"/>
+<line x1="420" y1="170" x2="360" y2="250"/><line x1="420" y1="170" x2="450" y2="250"/>
+<line x1="580" y1="170" x2="540" y2="250"/><line x1="580" y1="170" x2="640" y2="250"/>
+<line x1="360" y1="250" x2="340" y2="320"/><line x1="450" y1="250" x2="440" y2="320"/>
+<line x1="540" y1="250" x2="530" y2="320"/><line x1="640" y1="250" x2="650" y2="320"/>
+</g>
+<circle cx="500" cy="90" r="9" fill="#00F5A0"/>
+<circle cx="420" cy="170" r="7" fill="#00E5FF"/><circle cx="580" cy="170" r="7" fill="#00E5FF"/>
+<circle cx="360" cy="250" r="6" fill="#FFB020"/><circle cx="450" cy="250" r="6" fill="#FFB020"/><circle cx="540" cy="250" r="6" fill="#FFB020"/><circle cx="640" cy="250" r="6" fill="#FFB020"/>
+<circle cx="340" cy="320" r="5" fill="#FF6A3D"/><circle cx="440" cy="320" r="5" fill="#FF6A3D"/><circle cx="530" cy="320" r="5" fill="#FF6A3D"/><circle cx="650" cy="320" r="5" fill="#FF6A3D"/>
+</svg>"""
+
+SVG_HERO_PLAN = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400">
+<defs>
+<linearGradient id="g5" x1="0%" y1="50%" x2="100%" y2="50%"><stop offset="0%" stop-color="#00F5A0"/><stop offset="50%" stop-color="#00E5FF"/><stop offset="100%" stop-color="#FF6A3D"/></linearGradient>
+<filter id="blur5"><feGaussianBlur stdDeviation="35"/></filter>
+</defs>
+<rect width="900" height="400" fill="#080B12"/>
+<path d="M0,220 Q225,80 450,220 T900,220 L900,400 L0,400 Z" fill="url(#g5)" filter="url(#blur5)" opacity="0.32"/>
+<path d="M80,320 Q300,260 460,300 T780,180" fill="none" stroke="#E8ECF2" stroke-width="3" stroke-dasharray="7 9" opacity="0.55"/>
+<g stroke="#00E5FF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(80,220)">
+<circle cx="0" cy="0" r="14" fill="#00E5FF" stroke="none"/>
+<path d="M0,16 L-18,60 L2,74 L-30,110"/>
+<path d="M0,16 L24,48 L54,36"/>
+</g>
+<g transform="translate(780,120)"><line x1="0" y1="0" x2="0" y2="100" stroke="#E8ECF2" stroke-width="4"/><path d="M0,0 L46,12 L0,26 Z" fill="#FF6A3D"/></g>
+</svg>"""
+
+IMG_HERO_ANALISI = svg_uri(SVG_HERO_ANALISI)
+IMG_HERO_STATS = svg_uri(SVG_HERO_STATS)
+IMG_HERO_KPI = svg_uri(SVG_HERO_KPI)
+IMG_HERO_ML = svg_uri(SVG_HERO_ML)
+IMG_HERO_PLAN = svg_uri(SVG_HERO_PLAN)
+
+# ---- Piccole icone badge Tech/Sport riutilizzate nelle varie sezioni ----
+ICON_PULSE_SIDEBAR = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 30" width="100%" height="22"><polyline points="0,15 60,15 72,4 84,26 96,15 260,15" fill="none" stroke="#00F5A0" stroke-width="2" opacity="0.55"/></svg>"""
+ICON_LR = """<svg width="42" height="42" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" rx="10" fill="#111827"/><polyline points="10,45 22,30 34,38 50,14" fill="none" stroke="#00E5FF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>"""
+ICON_RF = """<svg width="42" height="42" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" rx="10" fill="#111827"/><line x1="30" y1="50" x2="30" y2="30" stroke="#00F5A0" stroke-width="3"/><line x1="30" y1="30" x2="16" y2="14" stroke="#00F5A0" stroke-width="3"/><line x1="30" y1="30" x2="44" y2="14" stroke="#00F5A0" stroke-width="3"/><circle cx="30" cy="50" r="4" fill="#00F5A0"/><circle cx="16" cy="14" r="4" fill="#00F5A0"/><circle cx="44" cy="14" r="4" fill="#00F5A0"/></svg>"""
+ICON_LOG = """<svg width="42" height="42" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" rx="10" fill="#111827"/><path d="M8,48 C20,48 20,12 30,12 C40,12 40,48 52,48" fill="none" stroke="#FFB020" stroke-width="4" stroke-linecap="round"/></svg>"""
+ICON_CLUSTER = """<svg width="42" height="42" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" rx="10" fill="#111827"/><circle cx="18" cy="20" r="5" fill="#00E5FF"/><circle cx="26" cy="16" r="5" fill="#00E5FF"/><circle cx="20" cy="30" r="5" fill="#00E5FF"/><circle cx="44" cy="40" r="5" fill="#FF6A3D"/><circle cx="36" cy="46" r="5" fill="#FF6A3D"/></svg>"""
+ICON_STRESS = """<svg width="42" height="42" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" rx="10" fill="#111827"/><polyline points="6,34 16,34 20,20 26,44 32,10 38,34 54,34" fill="none" stroke="#FF6A3D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>"""
+ICON_FLAG = """<svg width="42" height="42" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" rx="10" fill="#111827"/><line x1="18" y1="10" x2="18" y2="50" stroke="#E8ECF2" stroke-width="3"/><path d="M18,12 L46,20 L18,28 Z" fill="#00F5A0"/></svg>"""
 
 # ----------------- SIDEBAR -----------------
 with st.sidebar:
@@ -276,7 +384,8 @@ with st.sidebar:
             <h1 style='color: white; text-align: left; font-size: 1.55em; font-family:"Space Grotesk",sans-serif; font-weight:700; margin:0; letter-spacing:-0.03em;'>RUNAI</h1>
         </div>
     """, unsafe_allow_html=True)
-    st.markdown("<p style='color: #566178; font-size: 0.78em; margin-top: 2px; margin-bottom: 22px; font-family:\"JetBrains Mono\",monospace; letter-spacing:0.1em; text-transform:uppercase;'>Performance Intelligence System</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #566178; font-size: 0.78em; margin-top: 2px; margin-bottom: 6px; font-family:\"JetBrains Mono\",monospace; letter-spacing:0.1em; text-transform:uppercase;'>Performance Intelligence System</p>", unsafe_allow_html=True)
+    st.markdown(f"<div style='margin-bottom:18px;'>{ICON_PULSE_SIDEBAR}</div>", unsafe_allow_html=True)
 
     st.subheader("Dispositivo")
     device_scelto = st.selectbox("Seleziona dispositivo:", ["Garmin Forerunner 965", "Apple Watch Ultra", "Polar Vantage V3", "Fitbit Charge 6", "WHOOP 4.0", "Fascia Cardio Garmin"], label_visibility="collapsed")
@@ -317,15 +426,15 @@ with st.sidebar:
     # La navigazione ora appare come bottoni rettangolari stilizzati grazie al CSS impostato a inizio script
     pagina = st.radio(
         "Menu",
-        ["ANALISI", "STATISTICHE", "KPI DASHBOARD", "ML EXPLAINED", "CONSIGLIO FINALE"],
+        ["ANALISI STATO DI FORMA", "STATISTICHE ANALISI", "KPI DASHBOARD", "ANALISI PREDITTIVA ML", "CONSIGLIO FINALE"],
         label_visibility="collapsed"
     )
 
 # ----------------- PAGINA 1: ANALISI -----------------
-if pagina == "ANALISI":
+if pagina == "ANALISI STATO DI FORMA":
     header_block(
         "Modulo 01 — Acquisizione Dati",
-        "ANALISI: Stato di Forma, Oggi.",
+        "ANALISI STATO DI FORMA: Il Check-In di Oggi.",
         "Inserisci i parametri fisiologici e di carico odierni: il motore predittivo li userà per calcolare il tuo rischio infortunio in tempo reale.",
         IMG_HERO_ANALISI, "Pre-Session Check"
     )
@@ -340,7 +449,7 @@ if pagina == "ANALISI":
         st.markdown("### Obiettivi")
         col_o1, col_o2 = st.columns(2)
         with col_o1:
-            obj_oggi = st.text_input("Obiettivo Odierno", placeholder="Es: 10 km easy run")
+            obj_oggi = st.selectbox("Obiettivo Odierno", ["Leggero", "Medio", "Intermedio"])
         with col_o2:
             distanza_oggi = st.number_input("Distanza Prevista (km)", min_value=0.0, value=10.0)
 
@@ -400,10 +509,10 @@ if pagina == "ANALISI":
             """, unsafe_allow_html=True)
 
 # ----------------- PAGINA 2: STATISTICHE -----------------
-elif pagina == "STATISTICHE":
+elif pagina == "STATISTICHE ANALISI":
     header_block(
         "Modulo 02 — Analytics Storico",
-        "STATISTICHE: 90 Giorni di Dati Grezzi.",
+        "STATISTICHE ANALISI: 90 Giorni di Dati Grezzi.",
         "Volume, intensità e recupero degli ultimi tre mesi, decodificati in pattern utilizzabili.",
         IMG_HERO_STATS, "Historical Load"
     )
@@ -602,6 +711,7 @@ elif pagina == "KPI DASHBOARD":
             ))
             fig_gauge.update_layout(height=360)
             st.plotly_chart(style_fig(fig_gauge), use_container_width=True)
+            st.markdown("<div class='explain-text'>Sintetizza in un unico numero il rischio calcolato dal motore predittivo: zona verde = via libera, gialla = attenzione, arancione = fermati o riduci il carico. È lo stesso valore mostrato nella card 'Rischio Infortunio' qui sopra.</div>", unsafe_allow_html=True)
         with col_g2:
             fig_radar = go.Figure()
             fig_radar.add_trace(go.Scatterpolar(
@@ -611,6 +721,7 @@ elif pagina == "KPI DASHBOARD":
             ))
             fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 10], gridcolor='#1c2333'), angularaxis=dict(gridcolor='#1c2333')), height=360)
             st.plotly_chart(style_fig(fig_radar), use_container_width=True)
+            st.markdown("<div class='explain-text'>La ragnatela confronta i quattro ingredienti della giornata: sonno, stress, RPE previsto e recovery. Più l'area si allarga verso sonno/recovery restando stretta su stress/RPE, più sei in equilibrio; se si gonfia dal lato stress/RPE, il carico sta superando il recupero.</div>", unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("### Il Tuo Profilo Atletico AI")
@@ -645,24 +756,25 @@ elif pagina == "KPI DASHBOARD":
             """, unsafe_allow_html=True)
 
 # ----------------- PAGINA 4: ML EXPLAINED -----------------
-elif pagina == "ML EXPLAINED":
+elif pagina == "ANALISI PREDITTIVA ML":
     header_block(
         "Modulo 04 — Model Explainability",
-        "ML EXPLAINED: Dentro il Motore Predittivo.",
-        "Come 100 alberi decisionali votano il tuo rischio infortunio, spiegato passo per passo.",
-        IMG_HERO_ML, "Random Forest Engine"
+        "ANALISI PREDITTIVA ML: Dentro il Motore Predittivo.",
+        "Cinque algoritmi diversi leggono i tuoi dati per calcolare rischio, cluster comportamentali e trend di sovraccarico.",
+        IMG_HERO_ML, "Predictive Engine"
     )
 
     st.markdown("""
     <div class='info-box'>
     <h3>Cos'è il Machine Learning?</h3>
-    <p style='color: #B8C2D0; font-family:"Inter",sans-serif;'>L'algoritmo impara dai dati storici per fare previsioni su nuovi dati. Analizzando i 90 giorni passati, identifica pattern complessi che portano al rischio di infortunio e calcola la tua probabilità odierna.</p>
+    <p style='color: #B8C2D0; font-family:"Inter",sans-serif;'>L'algoritmo impara dai dati storici per fare previsioni su nuovi dati. Analizzando i 90 giorni passati, ogni modello identifica pattern diversi che portano al rischio di infortunio, al sovraccarico o a un particolare tipo di giornata, e calcola la tua situazione odierna.</p>
     </div>
     """, unsafe_allow_html=True)
 
     try:
         df = st.session_state.dati.copy()
-        X_train = df[['Distanza (km)', 'Ore Sonno', 'Stress Lavoro', 'FC Media', 'RPE']].values
+        feature_cols = ['Distanza (km)', 'Ore Sonno', 'Stress Lavoro', 'FC Media', 'RPE']
+        X_train = df[feature_cols].values
         y_train = df['Rischio Infortunio'].values
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X_train)
@@ -675,39 +787,237 @@ elif pagina == "ML EXPLAINED":
         cm = confusion_matrix(y_train, y_pred)
         feature_names, importances = ['Distanza', 'Sonno', 'Stress', 'FC Media', 'RPE'], rf_model.feature_importances_
 
-        tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Spiegazione", "Feature Importance", "Confusion Matrix", "Metriche", "Calcolo Live", "Simulatore What-If"])
+        tab_intro, tab_lr, tab_rf, tab_log, tab_cluster, tab_stress, tab5, tab6 = st.tabs(
+            ["Spiegazione", "Linear Regression", "Random Forest", "Logistic Regression", "Cluster", "Stress/Overload", "Calcolo Live", "Simulatore What-If"]
+        )
 
-        with tab1:
+        with tab_intro:
             st.markdown(f"""
             <div class='kpi-card' style='text-align: left;'>
-                <h2 style='color: #00F5A0; border:none; margin-bottom: 5px;'>Il Consiglio dei 100 Saggi (Random Forest)</h2>
+                <h2 style='color: #00F5A0; border:none; margin-bottom: 5px;'>Il Consiglio dei 100 Saggi (e non solo)</h2>
                 <p style='color: #B8C2D0; font-size: 1.05em; line-height: 1.6; font-family:"Inter",sans-serif;'>
-                Anziché fare un calcolo matematico rigido, il sistema usa una tecnica chiamata <strong>Random Forest</strong>.<br><br>
-                Immagina di convocare <strong>100 allenatori diversi</strong> a guardare il tuo storico di {len(df)} allenamenti. Ognuno di loro presta attenzione a cose diverse. Oggi, fornendo i tuoi dati odierni, tutti e 100 gli allenatori votano in segreto: <em>"Si farà male?"</em> oppure <em>"È al sicuro?"</em>.<br>
-                Il risultato in percentuale è <strong>quanti di questi 100 allenatori hanno votato per il Rischio Infortunio.</strong>
+                Il motore predittivo non usa un solo algoritmo, ma cinque, ognuno con un compito diverso: la <strong>Random Forest</strong> vota il rischio infortunio, la <strong>Regressione Lineare</strong> stima il tuo sforzo percepito, la <strong>Regressione Logistica</strong> calcola una probabilità di rischio "pulita", il <strong>Clustering</strong> raggruppa i tuoi allenamenti in profili simili e il modulo <strong>Stress/Overload</strong> sorveglia l'accumulo di fatica nel tempo.<br><br>
+                Pensa alla Random Forest come a <strong>100 allenatori diversi</strong> che guardano il tuo storico di {len(df)} allenamenti: ognuno presta attenzione a cose diverse. Oggi, fornendo i tuoi dati, tutti e 100 votano in segreto: <em>"Si farà male?"</em> oppure <em>"È al sicuro?"</em>. Il risultato in percentuale è <strong>quanti di questi 100 allenatori hanno votato per il Rischio Infortunio.</strong> Nelle schede qui sotto trovi il dettaglio di ciascun algoritmo, con i suoi grafici e i suoi risultati.
                 </p>
             </div>
             """, unsafe_allow_html=True)
 
-        with tab2:
-            st.markdown("**Quali Parametri Influenzano Più il Rischio?**")
-            imp_data = sorted(list(zip(feature_names, importances)), key=lambda x: x[1], reverse=True)
-            fig_imp = go.Figure(go.Bar(y=[x[0] for x in imp_data], x=[x[1]*100 for x in imp_data], orientation='h', marker_color='#00E5FF', text=[f'{x[1]*100:.1f}%' for x in imp_data], textposition='auto'))
-            fig_imp.update_layout(height=400, yaxis=dict(autorange="reversed"))
-            st.plotly_chart(style_fig(fig_imp), use_container_width=True)
+        # ================= 1. LINEAR REGRESSION =================
+        with tab_lr:
+            st.markdown(f"""
+            <div class='kpi-card' style='text-align:left; display:flex; gap:16px; align-items:flex-start;'>
+                <div>{ICON_LR}</div>
+                <div>
+                <h3 style='color:#00E5FF; margin-top:0;'>1. Linear Regression — Il Modello Lineare</h3>
+                <p style='color:#B8C2D0; font-family:"Inter",sans-serif; line-height:1.6; margin-bottom:0;'>
+                Cerca la relazione più semplice possibile: una linea retta che collega distanza, sonno, stress e FC media al tuo <strong>RPE</strong> (sforzo percepito). Ogni parametro riceve un "peso" (coefficiente): più il peso è alto, più quel fattore spinge il tuo sforzo percepito verso l'alto o verso il basso.
+                </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        with tab3:
-            st.markdown("**Confusion Matrix**")
-            fig_cm = go.Figure(data=go.Heatmap(z=cm, x=['Predetto: Sicuro', 'Predetto: Rischio'], y=['Reale: Sicuro', 'Reale: Rischio'], text=cm, texttemplate='%{text}', textfont={"size": 24, "color": "#04121a"}, colorscale=[[0,'#0E1420'],[1,'#00E5FF']], showscale=False))
-            fig_cm.update_layout(height=400)
-            st.plotly_chart(style_fig(fig_cm), use_container_width=True)
+            X_lr = df[['Distanza (km)', 'Ore Sonno', 'Stress Lavoro', 'FC Media']].values
+            y_lr = df['RPE'].values
+            scaler_lr = StandardScaler()
+            X_lr_scaled = scaler_lr.fit_transform(X_lr)
+            lin_model = LinearRegression()
+            lin_model.fit(X_lr_scaled, y_lr)
+            y_lr_pred = lin_model.predict(X_lr_scaled)
+            r2 = r2_score(y_lr, y_lr_pred)
+            mae = mean_absolute_error(y_lr, y_lr_pred)
 
-        with tab4:
+            col_lr1, col_lr2 = st.columns(2)
+            with col_lr1:
+                coef_data = sorted(zip(['Distanza', 'Sonno', 'Stress', 'FC Media'], lin_model.coef_), key=lambda x: abs(x[1]), reverse=True)
+                fig_coef = go.Figure(go.Bar(
+                    y=[c[0] for c in coef_data], x=[c[1] for c in coef_data], orientation='h',
+                    marker_color=['#FF6A3D' if c[1] > 0 else '#00E5FF' for c in coef_data],
+                    text=[f'{c[1]:+.2f}' for c in coef_data], textposition='auto'
+                ))
+                fig_coef.update_layout(height=320, title="Peso di Ogni Fattore sull'RPE", yaxis=dict(autorange="reversed"))
+                st.plotly_chart(style_fig(fig_coef), use_container_width=True)
+                st.markdown("<div class='explain-text'>Barre arancioni = il fattore alza l'RPE percepito, barre azzurre = lo abbassa (es. più sonno riduce la fatica sentita). Più la barra è lunga, più quel parametro pesa sulla tua sensazione di sforzo.</div>", unsafe_allow_html=True)
+            with col_lr2:
+                fig_scatter_lr = go.Figure()
+                fig_scatter_lr.add_trace(go.Scatter(x=y_lr, y=y_lr_pred, mode='markers', marker=dict(color='#00F5A0', size=8), name='Allenamenti'))
+                fig_scatter_lr.add_trace(go.Scatter(x=[1, 10], y=[1, 10], mode='lines', line=dict(color='#566178', dash='dash'), name='Predizione perfetta'))
+                fig_scatter_lr.update_layout(height=320, title="RPE Reale vs RPE Predetto", xaxis_title="RPE Reale", yaxis_title="RPE Predetto", showlegend=False)
+                st.plotly_chart(style_fig(fig_scatter_lr), use_container_width=True)
+                st.markdown(f"<div class='explain-text'>Ogni punto è un allenamento passato: più è vicino alla linea tratteggiata, più il modello indovina il tuo sforzo reale. <strong>R² = {r2:.2f}</strong> (variabilità spiegata, 1 = perfetto) · <strong>Errore medio = {mae:.2f} punti RPE</strong>.</div>", unsafe_allow_html=True)
+
+        # ================= 2. RANDOM FOREST =================
+        with tab_rf:
+            st.markdown(f"""
+            <div class='kpi-card' style='text-align:left; display:flex; gap:16px; align-items:flex-start;'>
+                <div>{ICON_RF}</div>
+                <div>
+                <h3 style='color:#00F5A0; margin-top:0;'>2. Random Forest — Il Consiglio dei 100 Saggi</h3>
+                <p style='color:#B8C2D0; font-family:"Inter",sans-serif; line-height:1.6; margin-bottom:0;'>
+                100 alberi decisionali, ognuno allenato su una porzione diversa dei tuoi dati, votano in autonomia se sei a rischio infortunio. La percentuale finale è quanti alberi hanno votato "rischio".
+                </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_rf1, col_rf2 = st.columns(2)
+            with col_rf1:
+                imp_data = sorted(list(zip(feature_names, importances)), key=lambda x: x[1], reverse=True)
+                fig_imp = go.Figure(go.Bar(y=[x[0] for x in imp_data], x=[x[1]*100 for x in imp_data], orientation='h', marker_color='#00E5FF', text=[f'{x[1]*100:.1f}%' for x in imp_data], textposition='auto'))
+                fig_imp.update_layout(height=320, title="Quali Parametri Pesano di Più", yaxis=dict(autorange="reversed"))
+                st.plotly_chart(style_fig(fig_imp), use_container_width=True)
+                st.markdown("<div class='explain-text'>Più lunga la barra, più quel parametro è stato decisivo nelle scelte dei 100 alberi. È il modo in cui la Random Forest 'spiega' il proprio voto finale.</div>", unsafe_allow_html=True)
+            with col_rf2:
+                fig_cm = go.Figure(data=go.Heatmap(z=cm, x=['Predetto: Sicuro', 'Predetto: Rischio'], y=['Reale: Sicuro', 'Reale: Rischio'], text=cm, texttemplate='%{text}', textfont={"size": 22, "color": "#04121a"}, colorscale=[[0,'#0E1420'],[1,'#00E5FF']], showscale=False))
+                fig_cm.update_layout(height=320, title="Confusion Matrix")
+                st.plotly_chart(style_fig(fig_cm), use_container_width=True)
+                st.markdown("<div class='explain-text'>Confronta le predizioni del modello con quanto è successo davvero: la diagonale (in alto a sinistra e in basso a destra) sono le previsioni corrette, il resto sono gli errori del modello.</div>", unsafe_allow_html=True)
+
             st.markdown("**Performance del Modello su Dati Storici**")
             col_m1, col_m2, col_m3 = st.columns(3)
             col_m1.metric("Accuracy", f"{acc*100:.1f}%", "Predizioni corrette")
             col_m2.metric("Precision", f"{prec*100:.1f}%", "Esattezza 'Rischio'")
             col_m3.metric("Recall", f"{rec*100:.1f}%", "Rischi individuati")
+            st.markdown("<div class='explain-text'>Accuracy = percentuale di giorni classificati correttamente. Precision = quando il modello grida 'rischio', quanto spesso ha ragione. Recall = quanti dei rischi reali il modello riesce a intercettare: è la metrica più importante per la sicurezza.</div>", unsafe_allow_html=True)
+
+        # ================= 3. LOGISTIC REGRESSION =================
+        with tab_log:
+            st.markdown(f"""
+            <div class='kpi-card' style='text-align:left; display:flex; gap:16px; align-items:flex-start;'>
+                <div>{ICON_LOG}</div>
+                <div>
+                <h3 style='color:#FFB020; margin-top:0;'>3. Logistic Regression — La Probabilità "Pulita"</h3>
+                <p style='color:#B8C2D0; font-family:"Inter",sans-serif; line-height:1.6; margin-bottom:0;'>
+                Al contrario della Random Forest (che vota), la Regressione Logistica calcola direttamente una probabilità tramite una curva a "S": più i tuoi parametri si allontanano dalla normalità, più la curva sale rapidamente verso il rischio.
+                </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            log_model = LogisticRegression(max_iter=1000)
+            log_model.fit(X_scaled, y_train)
+            y_log_proba = log_model.predict_proba(X_scaled)[:, 1]
+            y_log_pred = log_model.predict(X_scaled)
+            acc_log = accuracy_score(y_train, y_log_pred)
+
+            col_log1, col_log2 = st.columns(2)
+            with col_log1:
+                coef_log = sorted(zip(feature_names, log_model.coef_[0]), key=lambda x: abs(x[1]), reverse=True)
+                fig_log_coef = go.Figure(go.Bar(
+                    y=[c[0] for c in coef_log], x=[c[1] for c in coef_log], orientation='h',
+                    marker_color=['#FF6A3D' if c[1] > 0 else '#00E5FF' for c in coef_log],
+                    text=[f'{c[1]:+.2f}' for c in coef_log], textposition='auto'
+                ))
+                fig_log_coef.update_layout(height=320, title="Peso di Ogni Fattore sul Rischio (log-odds)", yaxis=dict(autorange="reversed"))
+                st.plotly_chart(style_fig(fig_log_coef), use_container_width=True)
+                st.markdown("<div class='explain-text'>Come sopra: arancione = alza la probabilità di rischio, azzurro = la abbassa. A differenza della Random Forest, qui il rapporto tra fattore e rischio resta lo stesso giorno dopo giorno (relazione lineare sulla probabilità).</div>", unsafe_allow_html=True)
+            with col_log2:
+                fig_log_hist = px.histogram(x=y_log_proba*100, nbins=20, color=y_train.astype(str),
+                                             color_discrete_map={'0': '#00E5FF', '1': '#FF6A3D'},
+                                             labels={'x': 'Probabilità di Rischio (%)', 'color': 'Rischio Reale'}, height=320)
+                fig_log_hist.update_layout(title="Distribuzione delle Probabilità Stimate")
+                st.plotly_chart(style_fig(fig_log_hist), use_container_width=True)
+                st.markdown(f"<div class='explain-text'>Ogni barra raggruppa allenamenti passati per probabilità stimata. Idealmente i giorni 'a rischio' (arancioni) si concentrano a destra e i giorni sicuri (azzurri) a sinistra. <strong>Accuracy = {acc_log*100:.1f}%</strong> sui dati storici.</div>", unsafe_allow_html=True)
+
+        # ================= 4. CLUSTER =================
+        with tab_cluster:
+            st.markdown(f"""
+            <div class='kpi-card' style='text-align:left; display:flex; gap:16px; align-items:flex-start;'>
+                <div>{ICON_CLUSTER}</div>
+                <div>
+                <h3 style='color:#00E5FF; margin-top:0;'>4. Cluster — Profili di Allenamento</h3>
+                <p style='color:#B8C2D0; font-family:"Inter",sans-serif; line-height:1.6; margin-bottom:0;'>
+                Il Clustering (K-Means) non conosce il "Rischio Infortunio": guarda solo sonno, stress, RPE e distanza e raggruppa da solo i giorni che si assomigliano, senza che nessuno gli dica cosa cercare. Il risultato sono 3 "profili tipo" delle tue giornate.
+                </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            cluster_features = ['Ore Sonno', 'Stress Lavoro', 'RPE', 'Distanza (km)']
+            X_cluster = df[cluster_features].values
+            scaler_cl = StandardScaler()
+            X_cluster_scaled = scaler_cl.fit_transform(X_cluster)
+            kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+            df['Cluster'] = kmeans.fit_predict(X_cluster_scaled)
+
+            profilo = df.groupby('Cluster')[cluster_features].mean()
+            profilo['Punteggio Carico'] = profilo['Stress Lavoro'] + profilo['RPE'] - profilo['Ore Sonno']
+            ordine = profilo['Punteggio Carico'].sort_values().index.tolist()
+            nomi_cluster = {ordine[0]: 'Recupero', ordine[1]: 'Carico Standard', ordine[2]: 'Sovraccarico'}
+            colori_cluster = {'Recupero': '#00F5A0', 'Carico Standard': '#00E5FF', 'Sovraccarico': '#FF6A3D'}
+            df['Profilo Giornata'] = df['Cluster'].map(nomi_cluster)
+
+            col_cl1, col_cl2 = st.columns(2)
+            with col_cl1:
+                fig_cluster = px.scatter(df, x='Ore Sonno', y='RPE', color='Profilo Giornata', size='Distanza (km)',
+                                          color_discrete_map=colori_cluster, height=340)
+                fig_cluster.update_layout(title="I 3 Profili Individuati (Sonno vs RPE)")
+                st.plotly_chart(style_fig(fig_cluster), use_container_width=True)
+                st.markdown("<div class='explain-text'>Ogni pallino è un allenamento passato, colorato secondo il gruppo a cui l'algoritmo lo ha assegnato da solo. La grandezza indica la distanza percorsa quel giorno.</div>", unsafe_allow_html=True)
+            with col_cl2:
+                cluster_counts = df['Profilo Giornata'].value_counts().reset_index()
+                cluster_counts.columns = ['Profilo Giornata', 'count']
+                fig_cl_pie = px.pie(cluster_counts, values='count', names='Profilo Giornata', hole=0.6, height=340,
+                                     color='Profilo Giornata', color_discrete_map=colori_cluster)
+                fig_cl_pie.update_layout(title="Quanto Tempo Passi in Ogni Profilo")
+                st.plotly_chart(style_fig(fig_cl_pie), use_container_width=True)
+                st.markdown("<div class='explain-text'>Se la fetta 'Sovraccarico' è la più grande, il tuo corpo passa la maggior parte del tempo in una condizione di carico elevato: è un segnale da tenere d'occhio anche quando il rischio infortunio del singolo giorno sembra basso.</div>", unsafe_allow_html=True)
+
+            if st.session_state.analisi_fatta:
+                r_cl = st.session_state.risultati_analisi
+                oggi_cluster = kmeans.predict(scaler_cl.transform([[r_cl['ore_sonno'], r_cl['stress_lavoro'], r_cl['rpe_previsto'], r_cl.get('distanza_oggi', 10.0)]]))[0]
+                profilo_oggi = nomi_cluster[oggi_cluster]
+                st.markdown(f"<div class='info-box' style='border-left-color:{colori_cluster[profilo_oggi]};'><strong>La giornata di oggi appartiene al profilo:</strong> <span style='color:{colori_cluster[profilo_oggi]}; font-weight:700;'>{profilo_oggi}</span></div>", unsafe_allow_html=True)
+
+        # ================= 5. STRESS / OVERLOAD PREDICTION =================
+        with tab_stress:
+            st.markdown(f"""
+            <div class='kpi-card' style='text-align:left; display:flex; gap:16px; align-items:flex-start;'>
+                <div>{ICON_STRESS}</div>
+                <div>
+                <h3 style='color:#FF6A3D; margin-top:0;'>5. Stress / Overload Prediction</h3>
+                <p style='color:#B8C2D0; font-family:"Inter",sans-serif; line-height:1.6; margin-bottom:0;'>
+                Questo modulo non guarda un solo giorno, ma la <strong>traiettoria</strong> di stress, sonno e sforzo. Impara a riconoscere quali combinazioni hanno storicamente prodotto un indice SMA (Stress Monitoring Average) elevato e stima la probabilità di sovraccarico per ogni giorno.
+                </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            overload_threshold = df['SMA'].quantile(0.75)
+            df['Overload'] = (df['SMA'] > overload_threshold).astype(int)
+            X_ov = df[['Stress Lavoro', 'Ore Sonno', 'RPE', 'Ore Lavoro']].values
+            y_ov = df['Overload'].values
+            scaler_ov = StandardScaler()
+            X_ov_scaled = scaler_ov.fit_transform(X_ov)
+            ov_model = LogisticRegression(max_iter=1000)
+            ov_model.fit(X_ov_scaled, y_ov)
+            df['Prob Overload'] = ov_model.predict_proba(X_ov_scaled)[:, 1] * 100
+            acc_ov = accuracy_score(y_ov, ov_model.predict(X_ov_scaled))
+
+            col_ov1, col_ov2 = st.columns(2)
+            with col_ov1:
+                df_recent_ov = df.tail(30)
+                fig_ov_trend = px.area(df_recent_ov, x='Giorno', y='Prob Overload', height=340, color_discrete_sequence=['#FF6A3D'])
+                fig_ov_trend.add_hline(y=50, line_dash="dash", line_color="#FFB020")
+                fig_ov_trend.update_layout(title="Probabilità di Sovraccarico — Ultimi 30gg")
+                st.plotly_chart(style_fig(fig_ov_trend), use_container_width=True)
+                st.markdown("<div class='explain-text'>Ogni picco sopra la linea tratteggiata è un giorno in cui la combinazione stress/sonno/sforzo somigliava molto ai giorni storici di sovraccarico. Picchi isolati sono normali, picchi ravvicinati indicano una fase da monitorare con attenzione.</div>", unsafe_allow_html=True)
+            with col_ov2:
+                coef_ov = sorted(zip(['Stress', 'Sonno', 'RPE', 'Ore Lavoro'], ov_model.coef_[0]), key=lambda x: abs(x[1]), reverse=True)
+                fig_ov_coef = go.Figure(go.Bar(
+                    y=[c[0] for c in coef_ov], x=[c[1] for c in coef_ov], orientation='h',
+                    marker_color=['#FF6A3D' if c[1] > 0 else '#00E5FF' for c in coef_ov],
+                    text=[f'{c[1]:+.2f}' for c in coef_ov], textposition='auto'
+                ))
+                fig_ov_coef.update_layout(height=340, title="Cosa Guida il Sovraccarico", yaxis=dict(autorange="reversed"))
+                st.plotly_chart(style_fig(fig_ov_coef), use_container_width=True)
+                st.markdown(f"<div class='explain-text'>Le ore di lavoro e lo stress mentale spesso pesano quanto l'allenamento stesso: il sovraccarico non è solo fisico. <strong>Accuracy = {acc_ov*100:.1f}%</strong> sui dati storici.</div>", unsafe_allow_html=True)
+
+            if st.session_state.analisi_fatta:
+                r_ov = st.session_state.risultati_analisi
+                input_ov = scaler_ov.transform([[r_ov['stress_lavoro'], r_ov['ore_sonno'], r_ov['rpe_previsto'], r_ov['ore_lavoro']]])
+                prob_ov_oggi = ov_model.predict_proba(input_ov)[0][1] * 100
+                ov_color = "#FF6A3D" if prob_ov_oggi >= 60 else "#FFB020" if prob_ov_oggi >= 30 else "#00F5A0"
+                st.markdown(f"<div class='info-box' style='border-left-color:{ov_color};'><strong>Probabilità di sovraccarico oggi:</strong> <span style='color:{ov_color}; font-weight:700;'>{prob_ov_oggi:.0f}%</span></div>", unsafe_allow_html=True)
 
         with tab5:
             st.markdown("**Come il Modello Calcola il Rischio Oggi**")
